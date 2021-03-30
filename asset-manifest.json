@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.js": "/notes-task-v2/static/js/main.57ba53ed.chunk.js",
-    "main.js.map": "/notes-task-v2/static/js/main.57ba53ed.chunk.js.map",
+    "main.js": "/notes-task-v2/static/js/main.89f565b6.chunk.js",
+    "main.js.map": "/notes-task-v2/static/js/main.89f565b6.chunk.js.map",
     "runtime-main.js": "/notes-task-v2/static/js/runtime-main.3bfceff1.js",
     "runtime-main.js.map": "/notes-task-v2/static/js/runtime-main.3bfceff1.js.map",
-    "static/js/2.473bc26b.chunk.js": "/notes-task-v2/static/js/2.473bc26b.chunk.js",
-    "static/js/2.473bc26b.chunk.js.map": "/notes-task-v2/static/js/2.473bc26b.chunk.js.map",
+    "static/js/2.9570f03c.chunk.js": "/notes-task-v2/static/js/2.9570f03c.chunk.js",
+    "static/js/2.9570f03c.chunk.js.map": "/notes-task-v2/static/js/2.9570f03c.chunk.js.map",
     "index.html": "/notes-task-v2/index.html",
-    "static/js/2.473bc26b.chunk.js.LICENSE.txt": "/notes-task-v2/static/js/2.473bc26b.chunk.js.LICENSE.txt"
+    "static/js/2.9570f03c.chunk.js.LICENSE.txt": "/notes-task-v2/static/js/2.9570f03c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.3bfceff1.js",
-    "static/js/2.473bc26b.chunk.js",
-    "static/js/main.57ba53ed.chunk.js"
+    "static/js/2.9570f03c.chunk.js",
+    "static/js/main.89f565b6.chunk.js"
   ]
 }
