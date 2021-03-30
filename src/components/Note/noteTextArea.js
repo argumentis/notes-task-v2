@@ -2,7 +2,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { setNoteId, editNote } from "../../Redux/ReducersFolder/notesReducer";
+import { editNote } from "../../redux/actions/notesActions";
+import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles((theme) => ({
   textAreaStyle: {
@@ -28,20 +29,20 @@ const mapStateToProps = (store) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
-    setNoteIdAction: (noteId) => dispatch(setNoteId(noteId)),
-    editNoteAction: (type, value) => dispatch(editNote(type, value)),
+    dispatch,
+    ...bindActionCreators({ editNote }, dispatch),
   };
-};
+}
 
 function NoteTextArea(props) {
   const classes = useStyles();
-  const { editNoteAction, defaultValue } = props;
+  const { editNote, defaultValue } = props;
 
   // func for change note value onChange
   const handleOnlChange = (event) => {
-    editNoteAction("changeNoteValue", event.target.value);
+    editNote("noteValue", event.target.value);
   };
 
   return (
@@ -60,6 +61,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(NoteTextArea);
 NoteTextArea.propTypes = {
   noteId: PropTypes.string,
   notesList: PropTypes.array.isRequired,
-  editNoteAction: PropTypes.func.isRequired,
+  editNote: PropTypes.func.isRequired,
   defaultValue: PropTypes.string,
 };

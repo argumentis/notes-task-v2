@@ -10,9 +10,14 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import IconButton from "@material-ui/core/IconButton";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import Hidden from "@material-ui/core/Hidden";
-import { addNote } from "../../Redux/ReducersFolder/notesReducer";
-import { addFolder, deleteFolder, setFolderId, editFolder, } from "../../Redux/ReducersFolder/folderReducer.js";
-import { setNoteId } from "../../Redux/ReducersFolder/notesReducer";
+import {
+  addFolder,
+  deleteFolder,
+  setFolderId,
+  editFolder,
+} from "../../redux/actions/folderActions";
+import { setNoteId, addNote, ClearUnusedNotes } from "../../redux/actions/notesActions";
+import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,43 +49,50 @@ const mapStateToProps = (store) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
-    addFolderAction: () => dispatch(addFolder()),
-    deleteFolderAction: () => dispatch(deleteFolder()),
-    editFolderAction: (type, value) => dispatch(editFolder(type, value)),
-    setFolderIdAction: (folderId) => dispatch(setFolderId(folderId)),
-    setNoteIdAction: (noteId) => dispatch(setNoteId(noteId)),
-    addNoteAction: (folderId) => dispatch(addNote(folderId)),
+    dispatch,
+    ...bindActionCreators(
+      {
+        addFolder,
+        deleteFolder,
+        editFolder,
+        setFolderId,
+        setNoteId,
+        addNote,
+        ClearUnusedNotes,
+      },
+      dispatch
+    ),
   };
-};
+}
 
-function FolderItem(props) {
+function FolderListItem(props) {
   const classes = useStyles();
   const {
     folderId,
     noteId,
-    itemId,
-    itemName,
-    itemStatus,
-    setFolderIdAction,
-    setNoteIdAction,
-    addFolderAction,
-    addNoteAction,
-    deleteFolderAction,
-    editFolderAction,
+    item,
+    setFolderId,
+    setNoteId,
+    addFolder,
+    addNote,
+    ClearUnusedNotes,
+    deleteFolder,
+    editFolder,
   } = props;
+  const { id, name, inputStatus } = item;
   const [menuStatus, setMenuStatus] = useState(null);
   const theme = useTheme();
   const widthLimit = useMediaQuery(theme.breakpoints.up("md"));
 
   // func for set selected folder
-  const handleListItemClick = (event, index) => {
-    if (folderId !== itemId) {
-      setFolderIdAction(index);
+  const handleListItemClick = () => {
+    if (folderId !== id) {
+      setFolderId(id);
     }
     if (noteId !== undefined) {
-      setNoteIdAction(undefined);
+      setNoteId(undefined);
     }
   };
 
@@ -90,11 +102,11 @@ function FolderItem(props) {
   };
   // change item name
   const handleOnChange = (event) => {
-    editFolderAction("renameFolder", event.target.value);
+    editFolder("name", event.target.value);
   };
   // deactive input status on Blur
   const handleOnBlur = () => {
-    editFolderAction("changeStatus", true);
+    editFolder("inputStatus", true);
   };
 
   return (
@@ -103,20 +115,20 @@ function FolderItem(props) {
         <ListItem
           button
           onDoubleClick={widthLimit ? openContextMenu : null}
-          selected={folderId === itemId}
-          onClick={(event) => handleListItemClick(event, itemId)}
+          selected={folderId === id}
+          onClick={handleListItemClick}
         >
           <ListItemText
             primary={
               <TextField
-                id={itemId}
+                id={id}
                 className={classes.inputStyle}
-                defaultValue={itemName}
+                defaultValue={name}
                 onChange={handleOnChange}
                 onBlur={handleOnBlur}
                 InputProps={{
-                  disableUnderline: itemStatus,
-                  disabled: itemStatus,
+                  disableUnderline: inputStatus,
+                  disabled: inputStatus,
                   autoFocus: true,
                 }}
               />
@@ -134,23 +146,24 @@ function FolderItem(props) {
         menuStatus={menuStatus}
         setMenuStatus={setMenuStatus}
         folderId={folderId}
-        addItem={widthLimit ? addFolderAction : addNoteAction}
-        deleteItem={deleteFolderAction}
-        clearId={setFolderIdAction}
-        changeInputStatus={editFolderAction}
+        addItem={widthLimit ? addFolder : addNote}
+        deleteItem={deleteFolder}
+        clearId={setFolderId}
+        ClearUnusedNotes={ClearUnusedNotes}
+        changeInputStatus={editFolder}
       />
     </div>
   );
 }
-export default connect(mapStateToProps, mapDispatchToProps)(FolderItem);
+export default connect(mapStateToProps, mapDispatchToProps)(FolderListItem);
 
-FolderItem.propTypes = {
-  itemId: PropTypes.string.isRequired,
-  itemName: PropTypes.string.isRequired,
-  itemStatus: PropTypes.bool.isRequired,
-  setFolderIdAction: PropTypes.func.isRequired,
-  setNoteIdAction: PropTypes.func.isRequired,
-  editFolderAction: PropTypes.func.isRequired,
+FolderListItem.propTypes = {
+  id: PropTypes.string,
+  name: PropTypes.string,
+  inputStatus: PropTypes.bool,
+  setFolderId: PropTypes.func.isRequired,
+  setNoteId: PropTypes.func.isRequired,
+  editFolder: PropTypes.func.isRequired,
   folderId: PropTypes.string,
   noteId: PropTypes.string,
 };

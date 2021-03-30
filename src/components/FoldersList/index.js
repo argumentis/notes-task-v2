@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import { connect } from "react-redux";
-import FolderItem from "./folderItem";
+import FolderListItem from "./folderListItem";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import AddFolderButton from "./addFolderButton.js";
 import Paper from "@material-ui/core/Paper";
-import NotesItem from "../NotesList/notesItem";
+import NotesListItem from "../NotesList/notesListItem";
 import Hidden from "@material-ui/core/Hidden";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,11 +50,7 @@ function FolderList(props) {
         <div className={classes.folderListWrapper}>
           <Droppable droppableId="droppableFolder" isCombineEnabled>
             {(provided) => (
-              <List
-                component="nav"
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
+              <List component="nav" {...provided.droppableProps} ref={provided.innerRef}>
                 {foldersList.map((folderItem, index) => (
                   <Draggable
                     index={index}
@@ -63,26 +59,14 @@ function FolderList(props) {
                     isDragDisabled
                   >
                     {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <FolderItem
-                          itemId={folderItem.id}
-                          itemName={folderItem.name}
-                          itemStatus={folderItem.inputStatus}
-                        />
+                      <div ref={provided.innerRef} {...provided.dragHandleProps}>
+                        <FolderListItem item={folderItem} />
                         <Hidden mdUp>
-                          {notesList.filter((NoteItem) => NoteItem.folderId === folderItem.id).map((NoteItem) => (
-                            <NotesItem
-                              key={NoteItem.id}
-                              itemId={NoteItem.id}
-                              itemName={NoteItem.name}
-                              itemStatus={NoteItem.inputStatus}
-                              itemDate={NoteItem.date}
-                            />
-                          ))}
+                          {notesList
+                            .filter((noteItem) => noteItem.folderId === folderItem.id)
+                            .map((NoteItem) => (
+                              <NotesListItem key={NoteItem.id} item={NoteItem} />
+                            ))}
                         </Hidden>
                       </div>
                     )}
@@ -103,4 +87,5 @@ export default connect(mapStateToProps)(FolderList);
 
 FolderList.propTypes = {
   foldersList: PropTypes.array.isRequired,
+  notesList: PropTypes.array.isRequired,
 };

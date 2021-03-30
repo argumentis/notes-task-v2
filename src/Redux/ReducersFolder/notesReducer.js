@@ -1,10 +1,13 @@
 import { uid } from "uid";
 import moment from "moment";
-
-const ADD_NOTE = "ADD_NOTE";
-const DELETE_NOTE = "DELETE_NOTE";
-const SET_NOTE_ID = "SET_NOTE_ID";
-const EDIT_NOTE = "EDIT_NOTE";
+import {
+  ADD_NOTE,
+  SET_NOTE_ID,
+  DELETE_NOTE,
+  EDIT_NOTE,
+  CLEAR_UNUSED_NOTES,
+  MOVE_NOTES,
+} from "../actions/notesActions";
 
 const initialState = {
   notesList: JSON.parse(localStorage.getItem("arrNotes")) || [],
@@ -31,20 +34,26 @@ export function notesReducer(state = initialState, action) {
     case DELETE_NOTE:
       const changedNoteList = state.notesList.filter((item) => item.id !== state.noteId);
       localStorage.setItem("arrNotes", JSON.stringify(changedNoteList));
-      return { ...state, notesList: changedNoteList, };
+      return { ...state, notesList: changedNoteList };
+
+    case MOVE_NOTES:
+      const editedNotesList = state.notesList
+        .filter((item) => item.folderId !== action.id)
+        .concat(action.payload);
+      localStorage.setItem("arrNotes", JSON.stringify(editedNotesList));
+      return { ...state, notesList: editedNotesList };
+
+    case CLEAR_UNUSED_NOTES:
+      const clearedNoteList = state.notesList.filter(
+        (item) => item.folderId !== action.payload
+      );
+      localStorage.setItem("arrNotes", JSON.stringify(clearedNoteList));
+      return { ...state, notesList: clearedNoteList };
 
     case EDIT_NOTE:
       const changeNoteList = state.notesList.map((item) => {
         if (item.id === state.noteId) {
-          return {
-            id: item.id,
-            folderId: action.typeOfChange === "changeNoteId" ? action.payload : item.folderId,
-            name: action.typeOfChange === "renameNote" ? action.payload : item.name,
-            inputStatus: action.typeOfChange === "changeStatus" ? action.payload : item.inputStatus,
-            noteValue: action.typeOfChange === "changeNoteValue" ? action.payload : item.noteValue || "",
-            date: item.date,
-            dateNote: item.dateNote,
-          };
+          return { ...item, [action.fieldName]: action.payload };
         }
         return item;
       });
@@ -53,32 +62,4 @@ export function notesReducer(state = initialState, action) {
     default:
       return state;
   }
-}
-
-export function addNote(activeFolderId) {
-  return {
-    type: "ADD_NOTE",
-    payload: activeFolderId,
-  };
-}
-
-export function deleteNote() {
-  return {
-    type: "DELETE_NOTE",
-  };
-}
-
-export function editNote(status, value) {
-  return {
-    type: "EDIT_NOTE",
-    payload: value,
-    typeOfChange: status,
-  };
-}
-
-export function setNoteId(noteId) {
-  return {
-    type: "SET_NOTE_ID",
-    payload: noteId,
-  };
 }

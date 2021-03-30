@@ -14,6 +14,7 @@ export default function ContextMenu(props) {
     addItem,
     deleteItem,
     clearId,
+    ClearUnusedNotes,
     menuStatus,
     setMenuStatus,
     changeInputStatus,
@@ -24,8 +25,8 @@ export default function ContextMenu(props) {
     setMenuStatus(null);
   };
 
-  // func for push new folder to array
-  const addFolderButton = () => {
+  // func for push new item to array
+  const addItemButton = () => {
     addItem(folderId);
     handleClose();
   };
@@ -33,11 +34,12 @@ export default function ContextMenu(props) {
   // func make input active
   const makeInputActive = () => {
     handleClose();
-    changeInputStatus("changeStatus", false);
+    changeInputStatus("inputStatus", false);
   };
 
-  // func for delete folder from array
-  const removeFolderButton = () => {
+  // func for delete item from array
+  const removeitemButton = () => {
+    if (name === "folder") ClearUnusedNotes(folderId);
     deleteItem();
     clearId(undefined);
     handleClose();
@@ -53,12 +55,12 @@ export default function ContextMenu(props) {
         onClose={handleClose}
       >
         {name === "note" && !widthLimit ? null : (
-          <MenuItem onClick={addFolderButton}>
+          <MenuItem onClick={addItemButton}>
             {`Add ${widthLimit ? name : "note"}`}
           </MenuItem>
         )}
         <MenuItem onClick={makeInputActive}>{`Rename ${name}`}</MenuItem>
-        <MenuItem onClick={removeFolderButton}>{`Delete ${name}`}</MenuItem>
+        <MenuItem onClick={removeitemButton}>{`Delete ${name}`}</MenuItem>
       </Menu>
     </div>
   );

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import { connect } from "react-redux";
-import NotesItem from "./notesItem";
+import NotesListItem from "./notesListItem";
 import Paper from "@material-ui/core/Paper";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -40,7 +40,6 @@ const mapStateToProps = (store) => {
 function NoteList(props) {
   const classes = useStyles();
   const { notesList, folderId } = props;
-  const notesInActiveFolder = notesList.filter((item) => item.folderId === folderId);
 
   return (
     <div className={classes.root}>
@@ -48,35 +47,28 @@ function NoteList(props) {
         <div className={classes.noteListWrapper}>
           <Droppable droppableId="droppable">
             {(provided) => (
-              <List 
-                component="nav"
-                {...provided.droppableProps}
-                ref={provided.innerRef}>
-                {notesInActiveFolder.map((item, index) => (
-                  <Draggable 
-                    index={index} 
-                    draggableId={item.id} 
-                    key={item.id}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={{
-                          backgroundColor: snapshot.isDragging ? "#fde46e" : "none",
-                          ...provided.draggableProps.style,
-                        }}
-                      >
-                        <NotesItem
-                          itemId={item.id}
-                          itemName={item.name}
-                          itemStatus={item.inputStatus}
-                          itemDate={item.date}
-                        />
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+              <List component="nav" {...provided.droppableProps} ref={provided.innerRef}>
+                {notesList
+                  .filter((item) => item.folderId === folderId)
+                  .map((item, index) => (
+                    <Draggable index={index} draggableId={item.id} key={item.id}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{
+                            ...provided.draggableProps.style,
+                            backgroundColor: snapshot.isDragging
+                              ? "#fde46e"
+                              : "transparent",
+                          }}
+                        >
+                          <NotesListItem item={item} />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                 {provided.placeholder}
               </List>
             )}

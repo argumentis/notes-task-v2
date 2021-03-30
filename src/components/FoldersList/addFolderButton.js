@@ -3,15 +3,16 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import { addFolder } from "../../Redux/ReducersFolder/folderReducer.js";
+import { addFolder } from "../../redux/actions/folderActions";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles(() => ({
   root: {
     textTransform: "none",
     fontWeight: "bold",
     width: "100%",
-    display: "  flex",
+    display: "flex",
     justifyContent: "flex-start",
     paddingLeft: "15px",
   },
@@ -24,19 +25,20 @@ const mapStateToProps = (store) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
-    addFolderAction: () => dispatch(addFolder()),
+    dispatch,
+    ...bindActionCreators({ addFolder }, dispatch),
   };
-};
+}
 
 function AddFolderButton(props) {
   const classes = useStyles();
-  const { addFolderAction } = props;
+  const { addFolder } = props;
 
   // func for add folder to array
   const handleButtonClick = () => {
-    addFolderAction();
+    addFolder();
   };
 
   return (
@@ -54,5 +56,5 @@ function AddFolderButton(props) {
 export default connect(mapStateToProps, mapDispatchToProps)(AddFolderButton);
 
 AddFolderButton.propTypes = {
-  addFolderAction: PropTypes.func.isRequired,
+  addFolder: PropTypes.func.isRequired,
 };

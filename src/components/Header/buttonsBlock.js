@@ -2,12 +2,18 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { addNote, setNoteId, deleteNote } from "../../Redux/ReducersFolder/notesReducer";
-import { deleteFolder, setFolderId } from "../../Redux/ReducersFolder/folderReducer";
+import {
+  addNote,
+  setNoteId,
+  deleteNote,
+  ClearUnusedNotes,
+} from "../../redux/actions/notesActions";
+import { deleteFolder, setFolderId } from "../../redux/actions/folderActions";
 import IconButton from "@material-ui/core/IconButton";
 import ViewCompactOutlinedIcon from "@material-ui/icons/ViewCompactOutlined";
 import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import NoteAddOutlinedIcon from "@material-ui/icons/NoteAddOutlined";
+import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -36,28 +42,29 @@ const mapStateToProps = (store) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
-    addNoteAction: (folderId) => dispatch(addNote(folderId)),
-    setNoteIdAction: (noteId) => dispatch(setNoteId(noteId)),
-    deleteFolderAction: () => dispatch(deleteFolder()),
-    deleteNoteAction: () => dispatch(deleteNote()),
-    setFolderIdAction: (folderId) => dispatch(setFolderId(folderId)),
+    dispatch,
+    ...bindActionCreators(
+      { addNote, deleteFolder, deleteNote, setFolderId, setNoteId, ClearUnusedNotes },
+      dispatch
+    ),
   };
-};
+}
 
 function ButtonsBlock(props) {
   const classes = useStyles();
   const {
     folderListVisibility,
     setFolderListVisibility,
-    deleteFolderAction,
-    deleteNoteAction,
+    ClearUnusedNotes,
+    deleteFolder,
+    deleteNote,
     folderId,
-    addNoteAction,
-    setNoteIdAction,
+    addNote,
+    setNoteId,
     noteId,
-    setFolderIdAction,
+    setFolderId,
   } = props;
 
   // func for close/open folder list
@@ -71,18 +78,20 @@ function ButtonsBlock(props) {
   // func for add new notes from folder
   const addNoteButton = () => {
     if (folderId) {
-      addNoteAction(folderId);
+      addNote(folderId);
     }
   };
 
   // func for remove active element folder/note
   const removeActiveElement = () => {
     if (!noteId) {
-      deleteFolderAction();
-      setFolderIdAction(undefined);
+      console.log(folderId);
+      ClearUnusedNotes(folderId);
+      deleteFolder();
+      setFolderId(undefined);
     } else {
-      deleteNoteAction();
-      setNoteIdAction(undefined);
+      deleteNote();
+      setNoteId(undefined);
     }
   };
 
@@ -106,11 +115,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(ButtonsBlock);
 ButtonsBlock.propTypes = {
   noteId: PropTypes.string,
   folderId: PropTypes.string,
-  addNoteAction: PropTypes.func.isRequired,
-  deleteFolderAction: PropTypes.func.isRequired,
-  deleteNoteAction: PropTypes.func.isRequired,
-  setNoteIdAction: PropTypes.func.isRequired,
-  setFolderIdAction: PropTypes.func.isRequired,
+  addNote: PropTypes.func.isRequired,
+  deleteFolder: PropTypes.func.isRequired,
+  deleteNote: PropTypes.func.isRequired,
+  ClearUnusedNotes: PropTypes.func.isRequired,
+  setNoteId: PropTypes.func.isRequired,
+  setFolderId: PropTypes.func.isRequired,
   folderListVisibility: PropTypes.bool.isRequired,
   setFolderListVisibility: PropTypes.func.isRequired,
 };

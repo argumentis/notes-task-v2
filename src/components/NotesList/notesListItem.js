@@ -7,11 +7,17 @@ import TextField from "@material-ui/core/TextField";
 import ContextMenu from "../ContextMenu/index";
 import NotesModal from "../Modal/index";
 import { connect } from "react-redux";
-import { addNote, setNoteId, deleteNote, editNote } from "../../Redux/ReducersFolder/notesReducer";
+import {
+  addNote,
+  setNoteId,
+  deleteNote,
+  editNote,
+} from "../../redux/actions/notesActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import IconButton from "@material-ui/core/IconButton";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import Hidden from "@material-ui/core/Hidden";
+import { bindActionCreators } from "redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,29 +67,17 @@ const mapStateToProps = (store) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+function mapDispatchToProps(dispatch) {
   return {
-    addNoteAction: (folderId) => dispatch(addNote(folderId)),
-    deleteNoteAction: () => dispatch(deleteNote()),
-    editNoteAction: (type, value) => dispatch(editNote(type, value)),
-    setNoteIdAction: (noteId) => dispatch(setNoteId(noteId)),
+    dispatch,
+    ...bindActionCreators({ addNote, deleteNote, editNote, setNoteId }, dispatch),
   };
-};
+}
 
-function NotesItem(props) {
+function NotesListItem(props) {
   const classes = useStyles();
-  const {
-    noteId,
-    folderId,
-    setNoteIdAction,
-    editNoteAction,
-    addNoteAction,
-    deleteNoteAction,
-    itemId,
-    itemName,
-    itemStatus,
-    itemDate,
-  } = props;
+  const { noteId, folderId, setNoteId, editNote, addNote, deleteNote, item } = props;
+  const { id, name, inputStatus, date } = item;
   const [open, setOpen] = useState(false);
   const [menuStatus, setMenuStatus] = useState(null);
   const theme = useTheme();
@@ -95,9 +89,9 @@ function NotesItem(props) {
   };
 
   // func for set selected folder
-  const handleListItemClick = (event, index) => {
-    if (noteId !== itemId) {
-      setNoteIdAction(index);
+  const handleListItemClick = () => {
+    if (noteId !== id) {
+      setNoteId(id);
     }
   };
 
@@ -108,12 +102,12 @@ function NotesItem(props) {
 
   // func for change value name note onChange
   const handleOnChange = (event) => {
-    editNoteAction("renameNote", event.target.value);
+    editNote("name", event.target.value);
   };
 
   // deactive input status on Blur
   const handleOnBlur = () => {
-    editNoteAction("changeStatus", true);
+    editNote("inputStatus", true);
   };
 
   return (
@@ -121,27 +115,27 @@ function NotesItem(props) {
       <ListItem
         button
         onDoubleClick={widthLimit ? openContextMenu : handleOpenModal}
-        selected={noteId === itemId}
-        onClick={(event) => handleListItemClick(event, itemId)}
+        selected={noteId === id}
+        onClick={handleListItemClick}
       >
         <div className={classes.notesFieldsPosition}>
           <ListItemText
             primary={
               <TextField
-                id={itemId}
+                id={id}
                 className={classes.rootInput}
-                value={itemName}
+                value={name}
                 onChange={handleOnChange}
                 onBlur={handleOnBlur}
                 InputProps={{
-                  disableUnderline: itemStatus,
-                  disabled: itemStatus,
+                  disableUnderline: inputStatus,
+                  disabled: inputStatus,
                   autoFocus: true,
                 }}
               />
             }
           />
-          <div>{itemDate}</div>
+          <div>{date}</div>
         </div>
         <Hidden mdUp>
           <IconButton onClick={openContextMenu}>
@@ -154,25 +148,25 @@ function NotesItem(props) {
         name={"note"}
         menuStatus={menuStatus}
         setMenuStatus={setMenuStatus}
-        addItem={addNoteAction}
-        deleteItem={deleteNoteAction}
-        clearId={setNoteIdAction}
-        changeInputStatus={editNoteAction}
+        addItem={addNote}
+        deleteItem={deleteNote}
+        clearId={setNoteId}
+        changeInputStatus={editNote}
         folderId={folderId}
       />
     </div>
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NotesItem);
+export default connect(mapStateToProps, mapDispatchToProps)(NotesListItem);
 
-NotesItem.propTypes = {
-  itemId: PropTypes.string.isRequired,
-  itemName: PropTypes.string.isRequired,
-  itemDate: PropTypes.string.isRequired,
-  itemStatus: PropTypes.bool.isRequired,
-  addNotesAction: PropTypes.func,
+NotesListItem.propTypes = {
+  id: PropTypes.string,
+  name: PropTypes.string,
+  date: PropTypes.string,
+  inputStatus: PropTypes.bool,
+  addNotes: PropTypes.func,
   notesList: PropTypes.array.isRequired,
-  setNoteIdAction: PropTypes.func.isRequired,
+  setNoteId: PropTypes.func.isRequired,
   noteId: PropTypes.string,
 };
