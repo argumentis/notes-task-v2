@@ -31,17 +31,18 @@ const mapStateToProps = (store) => {
 function NoteText(props) {
   const classes = useStyles();
   const { noteId, notesList } = props;
-  const currentNoteValue = notesList.filter((item) => item.id === noteId);
 
   return (
     <div className={classes.root}>
       <Paper variant="outlined" square>
-        {currentNoteValue.map((item) => (
-          <div key={item.id}>
-            <NoteTime itemTime={item.dateNote} />
-            <NoteTextArea defaultValue={item.noteValue} />
-          </div>
-        ))}
+        {notesList
+          .filter((item) => item.id === noteId)
+          .map((item) => (
+            <div key={item.id}>
+              <NoteTime itemTime={item.dateNote} />
+              <NoteTextArea defaultValue={item.noteValue} />
+            </div>
+          ))}
       </Paper>
     </div>
   );

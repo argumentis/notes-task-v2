@@ -21,11 +21,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const mapStateToProps = (store) => {
-  const { noteId, notesList } = store.notes;
+  const { noteId } = store.notes;
 
   return {
     noteId,
-    notesList,
   };
 };
 
@@ -60,7 +59,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(NoteTextArea);
 
 NoteTextArea.propTypes = {
   noteId: PropTypes.string,
-  notesList: PropTypes.array.isRequired,
   editNote: PropTypes.func.isRequired,
   defaultValue: PropTypes.string,
 };

@@ -25,7 +25,7 @@ export default function NotesModal(props) {
   const { setOpen, open } = props;
 
   const handleClose = () => {
-    setOpen(false);
+    setOpen();
   };
 
   return (

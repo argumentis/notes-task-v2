@@ -10,22 +10,35 @@ import { connect } from "react-redux";
 import { editNote, setNoteId, moveNotes } from "./redux/actions/notesActions";
 import Hidden from "@material-ui/core/Hidden";
 import { bindActionCreators } from "redux";
+import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
   },
-  header: { display: "flex" },
-  main: { display: "flex", height: "95vh" },
+  header: {
+    display: "flex",
+  },
+  main: {
+    display: "flex",
+    height: "95vh",
+  },
   folderList: {
     flex: "0 25%",
     [theme.breakpoints.down("sm")]: {
       flex: "0 100%",
     },
   },
-  notesList: { flex: "0 25%" },
-  note: { flex: "1 50%" },
+  folderListHide: {
+    display: "none",
+  },
+  notesList: {
+    flex: "0 25%",
+  },
+  note: {
+    flex: "1 50%",
+  },
 }));
 
 const mapStateToProps = (store) => {
@@ -47,23 +60,25 @@ function mapDispatchToProps(dispatch) {
 
 function App(props) {
   const { editNote, setNoteId, notesList, folderId, moveNotes } = props;
-  const [folderListVisibility, setfolderListVisibility] = useState(true);
+  const [folderListVisibility, setfolderListVisibility] = useState(false);
   const classes = useStyles();
 
   // func for change folder id from note when DRAG ended
   const handleOnDragEnd = (result) => {
     const { combine } = result;
-    const items = notesList.filter((item) => item.folderId === folderId);
-    const [reorderedItem] = items.splice(result.source.index, 1);
+    const notesListActiveFolder = notesList.filter((item) => item.folderId === folderId);
+    const [reorderedItem] = notesListActiveFolder.splice(result.source.index, 1);
+
     if (combine) {
       editNote("folderId", combine.draggableId);
       setNoteId(undefined);
     } else if (result.destination) {
-      items.splice(result.destination.index, 0, reorderedItem);
-      moveNotes(items, folderId);
+      notesListActiveFolder.splice(result.destination.index, 0, reorderedItem);
+      moveNotes(notesListActiveFolder, folderId);
     }
   };
 
+  // func for change folder id from note when DRAG started
   const handleOnDragStart = (result) => {
     const { draggableId } = result;
     setNoteId(draggableId);
@@ -82,8 +97,9 @@ function App(props) {
         </Hidden>
         <div className={classes.main}>
           <div
-            className={classes.folderList}
-            style={{ display: folderListVisibility ? "block" : "none" }}
+            className={classNames(classes.folderList, {
+              [classes.folderListHide]: folderListVisibility,
+            })}
           >
             <FolderList />
           </div>

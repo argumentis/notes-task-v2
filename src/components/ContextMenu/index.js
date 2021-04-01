@@ -4,8 +4,15 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    cursor: "context-menu",
+  },
+}));
 
 export default function ContextMenu(props) {
+  const classes = useStyles();
   const theme = useTheme();
   const widthLimit = useMediaQuery(theme.breakpoints.up("md"));
   const {
@@ -46,7 +53,7 @@ export default function ContextMenu(props) {
   };
 
   return (
-    <div style={{ cursor: "context-menu" }}>
+    <div className={classes.root}>
       <Menu
         id="simple-menu"
         anchorEl={menuStatus}
@@ -67,7 +74,9 @@ export default function ContextMenu(props) {
 }
 
 ContextMenu.propTypes = {
+  name: PropTypes.string,
   folderId: PropTypes.string,
+  ClearUnusedNotes: PropTypes.func,
   addItem: PropTypes.func.isRequired,
   deleteItem: PropTypes.func.isRequired,
   changeInputStatus: PropTypes.func.isRequired,

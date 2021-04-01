@@ -74,18 +74,23 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+const initialState = {
+  open: false,
+  menuStatus: null,
+};
 function NotesListItem(props) {
   const classes = useStyles();
   const { noteId, folderId, setNoteId, editNote, addNote, deleteNote, item } = props;
   const { id, name, inputStatus, date } = item;
-  const [open, setOpen] = useState(false);
-  const [menuStatus, setMenuStatus] = useState(null);
+  const [state, setState] = useState(initialState);
+  const { open, menuStatus } = state;
   const theme = useTheme();
   const widthLimit = useMediaQuery(theme.breakpoints.up("md"));
 
+  // func for set status modal
   const handleOpenModal = () => {
-    if (open) return setOpen(false);
-    return setOpen(true);
+    if (open) return setState({ ...state, open: false });
+    return setState({ ...state, open: true });
   };
 
   // func for set selected folder
@@ -97,7 +102,11 @@ function NotesListItem(props) {
 
   // func for set status context menu
   const openContextMenu = (event) => {
-    setMenuStatus(event.currentTarget);
+    setState({ ...state, menuStatus: event.currentTarget });
+  };
+
+  const closeContextMenu = (value) => {
+    setState({ ...state, menuStatus: value });
   };
 
   // func for change value name note onChange
@@ -143,11 +152,11 @@ function NotesListItem(props) {
           </IconButton>
         </Hidden>
       </ListItem>
-      <NotesModal open={open} setOpen={setOpen} />
+      <NotesModal open={open} setOpen={handleOpenModal} />
       <ContextMenu
         name={"note"}
         menuStatus={menuStatus}
-        setMenuStatus={setMenuStatus}
+        setMenuStatus={closeContextMenu}
         addItem={addNote}
         deleteItem={deleteNote}
         clearId={setNoteId}

@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import NotesListItem from "./notesListItem";
 import Paper from "@material-ui/core/Paper";
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import classNames from "classnames";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -17,6 +18,12 @@ const useStyles = makeStyles(() => ({
       flexDirection: "column",
       backgroundColor: "#f7f6f7",
     },
+  },
+  noteItemIsDrag: {
+    backgroundColor: "#fde46e",
+  },
+  noteItem: {
+    backgroundColor: "transparent",
   },
   noteListWrapper: {
     overflow: "auto",
@@ -57,12 +64,9 @@ function NoteList(props) {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          style={{
-                            ...provided.draggableProps.style,
-                            backgroundColor: snapshot.isDragging
-                              ? "#fde46e"
-                              : "transparent",
-                          }}
+                          className={classNames(classes.noteItem, {
+                            [classes.noteItemIsDrag]: snapshot.isDragging,
+                          })}
                         >
                           <NotesListItem item={item} />
                         </div>

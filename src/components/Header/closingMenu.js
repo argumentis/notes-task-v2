@@ -11,9 +11,15 @@ const useStyles = makeStyles(() => ({
       margin: "7px 0px 0px 5px",
     },
   },
-  redButton: { backgroundColor: "#fd5a52", },
-  yellowButton: { backgroundColor: "#fdbb3f", },
-  greenButton: { backgroundColor: "#31c747", },
+  redButton: {
+    backgroundColor: "#fd5a52",
+  },
+  yellowButton: {
+    backgroundColor: "#fdbb3f",
+  },
+  greenButton: {
+    backgroundColor: "#31c747",
+  },
 }));
 
 export default function ClosingMenu() {
