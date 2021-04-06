@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import { addFolder } from "../../Redux/actions/folderActions";
+import { addFolder } from "../../redux/actions/folderActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
